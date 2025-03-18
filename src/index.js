@@ -89,9 +89,13 @@ class Lad extends Dog {
         super('Браток', 2);
     }
 
-    static getInGameCount() { return this.inGameCount || 0; }
+    static getInGameCount() {
+        return this.inGameCount || 0;
+    }
 
-    static setInGameCount(value) { this.inGameCount = value; }
+    static setInGameCount(value) {
+        this.inGameCount = value;
+    }
 
     doAfterComingIntoPlay(gameContext, continuation) {
         Lad.setInGameCount(Lad.getInGameCount() + 1);
@@ -152,14 +156,44 @@ class Gatling extends Creature {
     }
 }
 
+class Rogue extends Creature {
+    constructor() {
+        super('Изгой', 2);
+    }
+
+    doBeforeAttack(gameContext, continuation) {
+        const {currentPlayer, oppositePlayer, position, updateView} = gameContext;
+
+        const oppositeClassProto = Object.getPrototypeOf(oppositePlayer.table[position]);
+        const currentCard = currentPlayer.table[position];
+        if (oppositeClassProto.hasOwnProperty('modifyDealedDamageToCreature')) {
+            currentCard.modifyDealedDamageToCreature = oppositeClassProto['modifyDealedDamageToCreature'];
+            delete oppositeClassProto['modifyDealedDamageToCreature'];
+        }
+        if (oppositeClassProto.hasOwnProperty('modifyDealedDamageToPlayer')) {
+            currentCard.modifyDealedDamageToCreature = oppositeClassProto['modifyDealedDamageToPlayer'];
+            delete oppositeClassProto['modifyDealedDamageToPlayer'];
+        }
+        if (oppositeClassProto.hasOwnProperty('modifyTakenDamage')) {
+            currentCard.modifyDealedDamageToCreature = oppositeClassProto['modifyTakenDamage'];
+            delete oppositeClassProto['modifyTakenDamage'];
+        }
+        updateView()
+
+        continuation();
+    };
+}
+
 const seriffStartDeck = [
     new Duck(),
-    new Duck(),
-    new Duck(),
+    // new Duck(),
+    // new Duck(),
+    new Rogue(),
 ];
 const banditStartDeck = [
     new Lad(),
     new Lad(),
+    // new Lad(),
 ];
 
 // Создание игры.
