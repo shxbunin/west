@@ -60,7 +60,7 @@ class Duck extends Creature {
 
 // Основа для собаки.
 class Dog extends Creature {
-    constructor(name='Пес-бандит', power=3) {
+    constructor(name = 'Пес-бандит', power = 3) {
         super(name, power);
     }
 }
@@ -70,10 +70,12 @@ class Trasher extends Dog {
         super('Громила', 5);
     }
 
-    modifyTakenDamage(value, fromCard, gameContext, continuation){
-        this.view.signalAbility(() => {continuation(value-1)});
+    modifyTakenDamage(value, fromCard, gameContext, continuation) {
+        this.view.signalAbility(() => {
+            continuation(value - 1)
+        });
     }
-    
+
     getDescriptions() {
         return [
             ...super.getDescriptions(),
@@ -82,14 +84,41 @@ class Trasher extends Dog {
     }
 }
 
+class Gatling extends Creature {
+    constructor() {
+        super('Гатлинг', 6);
+    }
+
+    attack(gameContext, continuation) {
+        const taskQueue = new TaskQueue();
+
+        const {currentPlayer, oppositePlayer, position, updateView} = gameContext;
+
+        taskQueue.push(onDone => this.view.showAttack(onDone));
+        for (let i = 0; i < oppositePlayer.table.length; i++) {
+            taskQueue.push(onDone => {
+                const oppositeCard = oppositePlayer.table[i];
+
+                if (oppositeCard) {
+                    this.dealDamageToCreature(this.currentPower, oppositeCard, gameContext, onDone);
+                }
+            });
+        }
+
+        taskQueue.continueWith(continuation);
+    }
+}
 
 const seriffStartDeck = [
     new Duck(),
+    new Gatling(),
     new Duck(),
     new Duck(),
 ];
 const banditStartDeck = [
     new Trasher(),
+    new Dog(),
+    new Dog(),
 ];
 
 // Создание игры.
