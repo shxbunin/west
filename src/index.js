@@ -100,7 +100,7 @@ class Gatling extends Creature {
                 const oppositeCard = oppositePlayer.table[i];
 
                 if (oppositeCard) {
-                    this.dealDamageToCreature(this.currentPower, oppositeCard, gameContext, onDone);
+                    this.dealDamageToCreature(2, oppositeCard, gameContext, onDone);
                 }
             });
         }
