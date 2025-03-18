@@ -1,3 +1,4 @@
+// import getCreatureDescription from './index.js';
 import {default as View} from './CardView.js';
 import TaskQueue from './TaskQueue.js';
 
@@ -217,7 +218,7 @@ const Card = function () {
     };
 
     // Строит описание цепочки прототипов с помощью имен конструкторов.
-    function getInheritanceDescription (card) {
+    function getInheritanceDescription(card) {
         const names = [];
         let obj = card;
         while (true) {

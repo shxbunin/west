@@ -1,4 +1,5 @@
 import Card from './Card.js';
+// import Creature from './Card.js';
 import Game from './Game.js';
 import TaskQueue from './TaskQueue.js';
 import SpeedRate from './SpeedRate.js';
@@ -27,16 +28,30 @@ function getCreatureDescription(card) {
     return 'Существо';
 }
 
+class Creature extends Card {
+    // constructor(...arg) {
+    //     super(...arg);
+    // }
+
+    getDescriptions() {
+        return [
+            getCreatureDescription(this),
+            super.getDescriptions()[0]
+        ]
+    }
+}
 
 
 // Основа для утки.
-class Duck extends Card {
+class Duck extends Creature {
     constructor() {
         super('Мирная утка', 2);
     }
+
     quacks() {
         console.log('quack');
     }
+
     swims() {
         console.log('float: both;');
     }
@@ -44,7 +59,7 @@ class Duck extends Card {
 
 
 // Основа для собаки.
-class Dog extends Card {
+class Dog extends Creature {
     constructor() {
         super('Пес-бандит', 3);
     }
